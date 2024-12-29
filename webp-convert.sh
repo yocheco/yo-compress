@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Definir la versión del script
-VERSION="0.0.2"
+VERSION="0.0.3"
 # URL del repositorio remoto donde se aloja el script
 REMOTE_URL="https://raw.githubusercontent.com/yocheco/yo-compress/main/webp-convert.sh"
 # Definir la carpeta de salida
@@ -187,7 +187,8 @@ if [ ! -f "$webp_path" ]; then
   # Mostrar y guardar en log
   echo "Archivo: $(basename "$input_file") -> Reducido en $reduction bytes ($reduction_percent%)"
   echo "[$(date)] Archivo: $(basename "$input_file") -> Reducido en $reduction bytes ($reduction_percent%)" >> "$LOG_FILE"
-fi;' {} \;) &>/dev/null
+fi;' {} \;)
+
 show_spinner_message $! "Procesando imágenes JPEG"
 
 # Procesar imágenes PNG
@@ -217,7 +218,8 @@ if [ ! -f "$webp_path" ]; then
   # Mostrar y guardar en log
   echo "Archivo: $(basename "$input_file") -> Reducido en $reduction bytes ($reduction_percent%)"
   echo "[$(date)] Archivo: $(basename "$input_file") -> Reducido en $reduction bytes ($reduction_percent%)" >> "$LOG_FILE"
-fi;' {} \;) &>/dev/null
+fi;' {} \;)
+
 show_spinner_message $! "Procesando imágenes PNG"
 
 echo "=== 🏁 Fin del script Yo-compress: $(date) ===" >> "$LOG_FILE"
