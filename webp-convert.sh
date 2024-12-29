@@ -8,6 +8,23 @@ directory="./"
 LOG_DIR="/var/log/yocompress"
 LOG_FILE="$LOG_DIR/yocompress.log"
 
+# Mostrar ayuda si se invoca con --help
+if [[ "$1" == "--help" ]]; then
+    echo "Uso: yocompress [directorio]"
+    echo ""
+    echo "Opciones:"
+    echo "  --help                Muestra este mensaje de ayuda."
+    echo ""
+    echo "Descripción:"
+    echo "  Este script convierte imágenes en un directorio al formato WebP."
+    echo "  También crea versiones comprimidas de las imágenes JPEG y PNG."
+    echo ""
+    echo "Ejemplo:"
+    echo "  yocompress /ruta/al/directorio"
+    echo ""
+    exit 0
+fi
+
 # Función para animación
 show_spinner() {
     local pid=$1
