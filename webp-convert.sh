@@ -63,11 +63,11 @@ show_spinner_message() {
 
 # Crear la carpeta de salida (eliminarla si ya existe)
 if [[ -d "$output_dir" ]]; then
-    show_spinner_message $! "La carpeta de salida $output_dir ya existe. Limpiado"
+    show_spinner_message $! "La carpeta de salida ya existe. Limpiado"
     rm -rf "$output_dir"
 fi
 
-show_spinner_message $! "Creando carpeta para imágenes comprimidas: $output_dir"
+show_spinner_message $! "Creando carpeta para imágenes comprimidas"
 mkdir -p "$output_dir"
 
 # Crear el archivo de log
