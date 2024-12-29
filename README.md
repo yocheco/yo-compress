@@ -15,7 +15,7 @@
 
 1. Abre una terminal y ejecuta este comando:
    ```bash
-   curl -fsSL https://github.com/yocheco/yo-compress/raw/main/install-yocompress.sh | bash
+   curl -fsSL https://github.com/yocheco/yo-compress/raw/main/install-yocompress.sh | sudo bash
    ```
 
 Esto hará lo siguiente:
@@ -79,7 +79,7 @@ Durante la ejecución, se te pedirá que configures las calidades:
 1. Descarga y ejecuta el desinstalador:
 
 ```bash
-curl -fsSL https://github.com/yocheco/yo-compress/raw/main/uninstall-yocompress.sh | bash
+curl -fsSL https://github.com/yocheco/yo-compress/raw/main/uninstall-yocompress.sh | sudo bash
 ```
 
 Esto eliminará:

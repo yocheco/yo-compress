@@ -94,13 +94,14 @@ if [[ ! -f "$LOG_FILE" ]]; then
     sudo chown $SUDO_USER:$SUDO_USER "$LOG_FILE"
 fi
 
-# Copiar el script al directorio global
-echo "Configurando el comando 'yocompress'..."
+# Descargar el script desde un repositorio remoto
+echo "Descargando script 'webp-convert.sh' desde el repositorio..."
+SCRIPT_URL="https://raw.githubusercontent.com/yocheco/yo-compress/main/webp-convert.sh"
 SCRIPT_NAME="webp-convert.sh"
 
-# Verificar si el script existe en el directorio actual
-if [[ ! -f "$SCRIPT_NAME" ]]; then
-    echo "Error: No se encontró el script '$SCRIPT_NAME' en el directorio actual."
+curl -fsSL "$SCRIPT_URL" -o "$SCRIPT_NAME"
+if [[ $? -ne 0 ]]; then
+    echo "Error: No se pudo descargar el script desde $SCRIPT_URL."
     exit 1
 fi
 
@@ -114,11 +115,12 @@ cp "$SCRIPT_NAME" "$TEMP_DIR"
 chmod +x "$TEMP_DIR/$SCRIPT_NAME"
 
 # Mover el script a /usr/local/bin con el nombre "yocompress"
-(sudo mv "$TEMP_DIR/$SCRIPT_NAME" /usr/local/bin/yocompress) &>/dev/null &
-show_spinner $!
+echo "Configurando el comando 'yocompress'..."
+sudo mv "$TEMP_DIR/$SCRIPT_NAME" /usr/local/bin/yocompress
 
 # Limpiar el directorio temporal
 rm -rf "$TEMP_DIR"
+rm -f "$SCRIPT_NAME"
 
 # Verificar si el comando yocompress está disponible
 if command -v yocompress &>/dev/null; then
