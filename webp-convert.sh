@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Definir la versión del script
+VERSION="0.0.1"
+# URL del repositorio remoto donde se aloja el script
+REMOTE_URL="https://raw.githubusercontent.com/yocheco/yo-compress/main/webp-convert.sh"
 # Definir la carpeta de salida
 output_dir="./compressed"
 # Directory argument
@@ -9,12 +13,16 @@ LOG_DIR="/var/log/yocompress"
 LOG_FILE="$LOG_DIR/yocompress.log"
 
 # Mostrar ayuda si se invoca con --help
+# =======================================
+# =======================================
 if [[ "$1" == "--help" ]]; then
     echo "Uso: yocompress [directorio]"
     echo ""
     echo "Opciones:"
     echo "  --help                Muestra este mensaje de ayuda."
     echo "  --logs                Muestra el contenido del archivo de logs."
+    echo "  --version             Muestra la versión del script."
+    echo "  --update              Actualiza el script a la última versión."
     echo ""
     echo "Descripción:"
     echo "  Este script convierte imágenes en un directorio al formato WebP."
@@ -27,6 +35,8 @@ if [[ "$1" == "--help" ]]; then
 fi
 
 # Mostrar los logs si se pasa la opción --logs
+# =======================================
+# =======================================
 if [[ "$1" == "--logs" ]]; then
     if [[ -f "$LOG_FILE" ]]; then
         echo "=== Mostrando logs de Yo-compress ==="
@@ -36,6 +46,51 @@ if [[ "$1" == "--logs" ]]; then
     fi
     exit 0
 fi
+
+
+# Mostrar la versión si se invoca con --version
+# =======================================
+# =======================================
+if [[ "$1" == "--version" ]]; then
+    echo "Yo-compress versión $VERSION"
+    exit 0
+fi
+
+
+
+# Actualizar el script si se invoca con --update
+# =======================================
+# =======================================
+if [[ "$1" == "--update" ]]; then
+    update_script
+    exit 0
+fi
+
+# Función para actualizar el script
+update_script() {
+    echo "Comprobando actualizaciones..."
+    temp_file=$(mktemp)
+
+    # Descargar la última versión del script
+    (
+        curl -fsSL "$REMOTE_URL" -o "$temp_file"
+    ) &>/dev/null &
+    show_spinner_message $! "Descargando la última versión"
+
+    if [[ -s "$temp_file" ]]; then
+        echo "Actualizando el script..."
+        (
+            sudo mv "$temp_file" "$(command -v yocompress)"
+            sudo chmod +x "$(command -v yocompress)"
+        ) &>/dev/null &
+        show_spinner_message $! "Reemplazando el archivo del script"
+        echo "El script se actualizó correctamente a la última versión."
+    else
+        echo "Error: No se pudo descargar la actualización. Verifica tu conexión o la URL del repositorio."
+        rm -f "$temp_file"
+        exit 1
+    fi
+}
 
 
 # Función para mostrar una animación de spinner
