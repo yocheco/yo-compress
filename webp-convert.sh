@@ -63,12 +63,12 @@ show_spinner_message() {
 
 # Crear la carpeta de salida (eliminarla si ya existe)
 if [[ -d "$output_dir" ]]; then
-    show_spinner_message $! "La carpeta de salida ya existe. Limpiado"
-    rm -rf "$output_dir"
+    (rm -rf "$output_dir") &>/dev/null &
+    show_spinner_message $! "Limpiando carpeta de salida"
 fi
 
+(mkdir -p "$output_dir") &>/dev/null &
 show_spinner_message $! "Creando carpeta para imágenes comprimidas"
-mkdir -p "$output_dir"
 
 # Crear el archivo de log
 if [[ ! -f "$LOG_FILE" ]]; then
@@ -88,8 +88,6 @@ read -p "Enter alpha quality (0-100, default 95): " alpha_quality
 alpha_quality=${alpha_quality:-95}
 
 # Procesar imágenes JPEG
-show_spinner_message $! "Procesando imágenes JPEG"
-
 # converting JPEG images
 (find "$directory" -type f \( -iname "*.jpg" -o -iname "*.jpeg" \) \
 -exec bash -c '
@@ -103,10 +101,9 @@ if [ ! -f "$webp_path" ]; then
   cwebp -quiet -q '"$jpeg_quality"' "$0" -o "$webp_path";
   convert "$0" -quality '"$jpeg_quality"' "$jpg_path";
 fi;' {} \;) &>/dev/null
-
+show_spinner_message $! "Procesando imágenes JPEG"
 
 # Procesar imágenes PNG
-show_spinner_message $! "Procesando imágenes PNG"
 (find "$directory" -type f -iname "*.png" \
 -exec bash -c '
 png_quality=$png_quality
@@ -124,6 +121,7 @@ if [ ! -f "$webp_path" ]; then
   cwebp -quiet -alpha_q '"$alpha_quality"' -q '"$png_quality"' "$0" -o "$webp_path";
   convert "$0" -quality '"$png_quality"' "$jpg_path";
 fi;' {} \;) >> $LOG_FILE
+show_spinner_message $! "Procesando imágenes PNG"
 
 echo "=== Fin del script Yocompress: $(date) ===" >> "$LOG_FILE"
 echo "Imágenes comprimidas guardadas en: $output_dir"
