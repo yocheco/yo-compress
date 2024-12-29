@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Definir la versión del script
-VERSION="0.0.1"
+VERSION="0.0.2"
 # URL del repositorio remoto donde se aloja el script
 REMOTE_URL="https://raw.githubusercontent.com/yocheco/yo-compress/main/webp-convert.sh"
 # Definir la carpeta de salida
@@ -162,7 +162,6 @@ read -p "Enter alpha quality (0-100, default 95): " alpha_quality
 alpha_quality=${alpha_quality:-95}
 
 # Procesar imágenes JPEG
-# converting JPEG images
 (find "$directory" -type f \( -iname "*.jpg" -o -iname "*.jpeg" \) \
 -exec bash -c '
 jpeg_quality=$jpeg_quality
@@ -170,10 +169,24 @@ input_file="$0"
 output_dir="./compressed"
 webp_path="$output_dir/$(basename "$input_file" | sed 's/\.[^.]*$/.webp/')"
 jpg_path="$output_dir/$(basename "$input_file" | sed 's/\.[^.]*$/.jpg/')"
+LOG_FILE="/var/log/yocompress/yocompress.log"
+
 if [ ! -f "$webp_path" ]; then 
-  echo "$webp_path image ok";
-  cwebp -quiet -q '"$jpeg_quality"' "$0" -o "$webp_path";
-  convert "$0" -quality '"$jpeg_quality"' "$jpg_path";
+  original_size=$(du -b "$input_file" | cut -f1)
+  
+  # Convertir a WebP
+  cwebp -quiet -q '"$jpeg_quality"' "$input_file" -o "$webp_path"
+  
+  # Comprimir a JPEG
+  convert "$input_file" -quality '"$jpeg_quality"' "$jpg_path"
+  
+  compressed_size=$(du -b "$webp_path" | cut -f1)
+  reduction=$((original_size - compressed_size))
+  reduction_percent=$((100 * reduction / original_size))
+  
+  # Mostrar y guardar en log
+  echo "Archivo: $(basename "$input_file") -> Reducido en $reduction bytes ($reduction_percent%)"
+  echo "[$(date)] Archivo: $(basename "$input_file") -> Reducido en $reduction bytes ($reduction_percent%)" >> "$LOG_FILE"
 fi;' {} \;) &>/dev/null
 show_spinner_message $! "Procesando imágenes JPEG"
 
@@ -186,15 +199,25 @@ input_file="$0"
 output_dir="./compressed"
 webp_path="$output_dir/$(basename "$input_file" | sed 's/\.[^.]*$/.webp/')"
 jpg_path="$output_dir/$(basename "$input_file" | sed 's/\.[^.]*$/.jpg/')"
-start_time=$(date "+%Y-%m-%d %H:%M:%S")
-LOG_DIR="/var/log/yocompress"
-LOG_FILE="$LOG_DIR/yocompress.log"
+LOG_FILE="/var/log/yocompress/yocompress.log"
+
 if [ ! -f "$webp_path" ]; then 
-  echo "$webp_path image ok";
-  echo "[$start_time] Procesando $input_file...";
-  cwebp -quiet -alpha_q '"$alpha_quality"' -q '"$png_quality"' "$0" -o "$webp_path";
-  convert "$0" -quality '"$png_quality"' "$jpg_path";
-fi;' {} \;) >> $LOG_FILE
+  original_size=$(du -b "$input_file" | cut -f1)
+  
+  # Convertir a WebP
+  cwebp -quiet -alpha_q '"$alpha_quality"' -q '"$png_quality"' "$input_file" -o "$webp_path"
+  
+  # Comprimir a JPEG
+  convert "$input_file" -quality '"$png_quality"' "$jpg_path"
+  
+  compressed_size=$(du -b "$webp_path" | cut -f1)
+  reduction=$((original_size - compressed_size))
+  reduction_percent=$((100 * reduction / original_size))
+  
+  # Mostrar y guardar en log
+  echo "Archivo: $(basename "$input_file") -> Reducido en $reduction bytes ($reduction_percent%)"
+  echo "[$(date)] Archivo: $(basename "$input_file") -> Reducido en $reduction bytes ($reduction_percent%)" >> "$LOG_FILE"
+fi;' {} \;) &>/dev/null
 show_spinner_message $! "Procesando imágenes PNG"
 
 echo "=== 🏁 Fin del script Yo-compress: $(date) ===" >> "$LOG_FILE"
