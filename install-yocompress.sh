@@ -114,7 +114,7 @@ if [[ ! -f "$LOG_FILE" ]]; then
     sudo chown $SUDO_USER:$SUDO_USER "$LOG_FILE"
 fi
 
-# Descargar el script desde un repositorio remoto
+# Descargar el script desde un repositorio remoto publico
 SCRIPT_URL="https://raw.githubusercontent.com/yocheco/yo-compress/main/webp-convert.sh"
 SCRIPT_NAME="webp-convert.sh"
 
@@ -143,7 +143,7 @@ rm -rf "$TEMP_DIR"
 rm -f "$SCRIPT_NAME"
 
 # Verificar si el comando yocompress está disponible
-if command -v yocompress &>/dev/null; then
+if command -v yocompress --help &>/dev/null; then
     echo "El comando 'yocompress' se instaló correctamente y está listo para usarse."
     echo "Ejemplo de uso: yocompress --help"
 else
