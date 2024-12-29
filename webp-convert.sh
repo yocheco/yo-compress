@@ -53,6 +53,7 @@ show_spinner_message() {
 # Función para actualizar el script
 update_script() {
     echo "Comprobando actualizaciones..."
+    echo "=== 🚀 Inicio de actualización: $(date) ===" >> "$LOG_FILE"
     temp_file=$(mktemp)
 
     # Descargar la última versión del script
@@ -69,8 +70,12 @@ update_script() {
         ) &>/dev/null &
         show_spinner_message $! "Reemplazando el archivo del script"
         echo "El script se actualizó correctamente a la última versión."
+        echo "[$(date)] El script se actualizó correctamente a la última versión." >> "$LOG_FILE"
+        echo "=== 🏁 Fin de actualización: $(date) ===" >> "$LOG_FILE"
+         yocompress --version  # Mostrar la versión actualizada
     else
         echo "Error: No se pudo descargar la actualización. Verifica tu conexión o la URL del repositorio."
+        echo "[$(date)] Error durante la actualización. No se pudo descargar el script." >> "$LOG_FILE"
         rm -f "$temp_file"
         exit 1
     fi
