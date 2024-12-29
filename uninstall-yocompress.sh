@@ -75,5 +75,15 @@ case "$OS" in
         ;;
 esac
 
-echo "Dependencias eliminadas."
+# Eliminar carpeta de logs
+LOG_DIR="/var/log/yocompress"
+if [[ -d "$LOG_DIR" ]]; then
+    echo "Eliminando carpeta de logs en $LOG_DIR..."
+    (sudo rm -rf "$LOG_DIR") &>/dev/null &
+    show_spinner $!
+    echo "Carpeta de logs eliminada correctamente."
+else
+    echo "La carpeta de logs no se encontró en $LOG_DIR."
+fi
+
 echo "Yocompress se desinstaló correctamente."

@@ -24,7 +24,7 @@ show_spinner() {
     tput civis  # Ocultar cursor
     while ps -p $pid &>/dev/null; do
         local temp=${spinstr#?}
-        printf " [%c] Instalando...  " "$spinstr"
+        printf " [%c] Procesando...  " "$spinstr"
         spinstr=$temp${spinstr%"$temp"}
         sleep $delay
         printf "\r"
@@ -33,7 +33,7 @@ show_spinner() {
     echo " [✔] Hecho"
 }
 
-# Función para instalar dependencias
+# Instalar dependencias según el sistema operativo
 install_dependencies() {
     case "$OS" in
         ubuntu|debian)
@@ -73,6 +73,26 @@ install_dependencies() {
 }
 
 install_dependencies
+
+# Crear carpeta de logs
+LOG_DIR="/var/log/yocompress"
+LOG_FILE="$LOG_DIR/yocompress.log"
+
+# Crear carpeta de logs
+echo "Creando carpeta de logs en $LOG_DIR..."
+if [[ ! -d "$LOG_DIR" ]]; then
+    sudo mkdir -p "$LOG_DIR"
+    sudo chmod 755 "$LOG_DIR"
+    sudo chown $SUDO_USER:$SUDO_USER "$LOG_DIR"
+fi
+
+# Crear archivo de logs
+echo "Creando archivo de logs en $LOG_FILE..."
+if [[ ! -f "$LOG_FILE" ]]; then
+    sudo touch "$LOG_FILE"
+    sudo chmod 644 "$LOG_FILE"
+    sudo chown $SUDO_USER:$SUDO_USER "$LOG_FILE"
+fi
 
 # Copiar el script al directorio global
 echo "Configurando el comando 'yocompress'..."

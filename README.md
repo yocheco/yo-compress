@@ -32,16 +32,33 @@ yocompress --help
 
 ---
 
+### Carpeta de Logs
+Durante la instalación, se crea una carpeta para los logs en `/var/log/yocompress`. Esta carpeta almacena información detallada de cada ejecución del script, lo que facilita la depuración y el seguimiento de las operaciones realizadas.
+
+
+### Logs
+Todos los detalles de cada ejecución del script se registran en el archivo de logs:
+
+- Carpeta de logs: `/var/log/yocompress/`
+- Archivo de logs: `/var/log/yocompress/yocompress.log`
+
+Puedes consultar este archivo para verificar las operaciones realizadas o para depurar problemas. Por ejemplo:
+
+```bash
+cat /var/log/yocompress/yocompress.log
+```
+
 ## 📢 Uso
 
 ### Comprimir Imágenes
 
 1. Coloca las imágenes JPEG/PNG en un directorio.
-2. Ejecuta:
+2. Ejecuta en el directorio:
 
 ```bash
-yocompress <directorio>
+yocompress /min
 ```
+
 
 3. Se generarán las versiones comprimidas en WebP en el mismo directorio.
 
