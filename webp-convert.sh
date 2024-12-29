@@ -14,6 +14,7 @@ if [[ "$1" == "--help" ]]; then
     echo ""
     echo "Opciones:"
     echo "  --help                Muestra este mensaje de ayuda."
+    echo "  --logs                Muestra el contenido del archivo de logs."
     echo ""
     echo "Descripción:"
     echo "  Este script convierte imágenes en un directorio al formato WebP."
@@ -24,6 +25,18 @@ if [[ "$1" == "--help" ]]; then
     echo ""
     exit 0
 fi
+
+# Mostrar los logs si se pasa la opción --logs
+if [[ "$1" == "--logs" ]]; then
+    if [[ -f "$LOG_FILE" ]]; then
+        echo "=== Mostrando logs de Yo-compress ==="
+        cat "$LOG_FILE"
+    else
+        echo "No se encontró el archivo de logs en: $LOG_FILE"
+    fi
+    exit 0
+fi
+
 
 # Función para mostrar una animación de spinner
 show_spinner() {

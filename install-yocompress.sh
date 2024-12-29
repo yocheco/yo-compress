@@ -142,10 +142,11 @@ sudo mv "$TEMP_DIR/$SCRIPT_NAME" /usr/local/bin/yocompress
 rm -rf "$TEMP_DIR"
 rm -f "$SCRIPT_NAME"
 
-# Verificar si el comando yocompress está disponible
-if command -v yocompress --help &>/dev/null; then
+# Verificar si el comando yocompress está disponible y ejecutarlo con --help
+if command -v yocompress &>/dev/null; then
     echo "El comando 'yocompress' se instaló correctamente y está listo para usarse."
-    echo "Ejemplo de uso: yocompress --help"
+    echo "Ejecutando 'yocompress --help':"
+    yocompress --help
 else
     echo "Error: No se pudo instalar el comando 'yocompress'."
     exit 1
