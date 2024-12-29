@@ -12,6 +12,70 @@ directory="./"
 LOG_DIR="/var/log/yocompress"
 LOG_FILE="$LOG_DIR/yocompress.log"
 
+# Funciones
+# =======================================   
+# =======================================
+# Función para mostrar una animación de spinner
+show_spinner() {
+    local pid=$1
+    local delay=0.1
+    local spinstr='|/-\'
+    tput civis  # Ocultar cursor
+    while ps -p $pid &>/dev/null; do
+        local temp=${spinstr#?}
+        printf " [%c] Procesando...  " "$spinstr"
+        spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        printf "\r"
+    done
+    tput cnorm  # Restaurar cursor
+    echo " [✔] Hecho"
+}
+
+# Función para mostrar un spinner con texto personalizado
+show_spinner_message() {
+    local pid=$1
+    local message=$2
+    local delay=0.1
+    local spinstr='|/-\'
+    tput civis  # Ocultar cursor
+    while ps -p $pid &>/dev/null; do
+        local temp=${spinstr#?}
+        printf " [%c] %s  " "$spinstr" "$message"
+        spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        printf "\r"
+    done
+    tput cnorm  # Restaurar cursor
+    echo " [✔] $message completado."
+}
+
+# Función para actualizar el script
+update_script() {
+    echo "Comprobando actualizaciones..."
+    temp_file=$(mktemp)
+
+    # Descargar la última versión del script
+    (
+        curl -fsSL "$REMOTE_URL" -o "$temp_file"
+    ) &>/dev/null &
+    show_spinner_message $! "Descargando la última versión"
+
+    if [[ -s "$temp_file" ]]; then
+        echo "Actualizando el script..."
+        (
+            sudo mv "$temp_file" "$(command -v yocompress)"
+            sudo chmod +x "$(command -v yocompress)"
+        ) &>/dev/null &
+        show_spinner_message $! "Reemplazando el archivo del script"
+        echo "El script se actualizó correctamente a la última versión."
+    else
+        echo "Error: No se pudo descargar la actualización. Verifica tu conexión o la URL del repositorio."
+        rm -f "$temp_file"
+        exit 1
+    fi
+}
+
 # Mostrar ayuda si se invoca con --help
 # =======================================
 # =======================================
@@ -61,72 +125,10 @@ fi
 # Actualizar el script si se invoca con --update
 # =======================================
 # =======================================
-# Función para actualizar el script
-update_script() {
-    echo "Comprobando actualizaciones..."
-    temp_file=$(mktemp)
-
-    # Descargar la última versión del script
-    (
-        curl -fsSL "$REMOTE_URL" -o "$temp_file"
-    ) &>/dev/null &
-    show_spinner_message $! "Descargando la última versión"
-
-    if [[ -s "$temp_file" ]]; then
-        echo "Actualizando el script..."
-        (
-            sudo mv "$temp_file" "$(command -v yocompress)"
-            sudo chmod +x "$(command -v yocompress)"
-        ) &>/dev/null &
-        show_spinner_message $! "Reemplazando el archivo del script"
-        echo "El script se actualizó correctamente a la última versión."
-    else
-        echo "Error: No se pudo descargar la actualización. Verifica tu conexión o la URL del repositorio."
-        rm -f "$temp_file"
-        exit 1
-    fi
-}
-
 if [[ "$1" == "--update" ]]; then
     update_script
     exit 0
 fi
-
-# Función para mostrar una animación de spinner
-show_spinner() {
-    local pid=$1
-    local delay=0.1
-    local spinstr='|/-\'
-    tput civis  # Ocultar cursor
-    while ps -p $pid &>/dev/null; do
-        local temp=${spinstr#?}
-        printf " [%c] Procesando...  " "$spinstr"
-        spinstr=$temp${spinstr%"$temp"}
-        sleep $delay
-        printf "\r"
-    done
-    tput cnorm  # Restaurar cursor
-    echo " [✔] Hecho"
-}
-
-# Función para mostrar un spinner con texto personalizado
-show_spinner_message() {
-    local pid=$1
-    local message=$2
-    local delay=0.1
-    local spinstr='|/-\'
-    tput civis  # Ocultar cursor
-    while ps -p $pid &>/dev/null; do
-        local temp=${spinstr#?}
-        printf " [%c] %s  " "$spinstr" "$message"
-        spinstr=$temp${spinstr%"$temp"}
-        sleep $delay
-        printf "\r"
-    done
-    tput cnorm  # Restaurar cursor
-    echo " [✔] $message completado."
-}
-
 
 # Crear la carpeta de salida (eliminarla si ya existe)
 if [[ -d "$output_dir" ]]; then
