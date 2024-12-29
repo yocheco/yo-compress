@@ -1,6 +1,7 @@
 #!/bin/bash
 
-
+# Forzar modo interactivo
+exec < /dev/tty
 
 echo "=== Desinstalador de Yocompress ==="
 
@@ -23,7 +24,7 @@ fi
 
 # Pregunta sobre dependencias
 read -p "¿Deseas eliminar las dependencias instaladas (webp, ImageMagick)? (s/n): " remove_deps
-confirm=${confirm:-"n"}
+remove_deps=${remove_deps:-"n"}
 if [[ "$remove_deps" == "s" || "$remove_deps" == "S" ]]; then
     echo "Detectando sistema operativo..."
     if [[ -f /etc/os-release ]]; then
