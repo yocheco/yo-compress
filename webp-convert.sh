@@ -72,10 +72,10 @@ show_spinner_message $! "Creando carpeta para imágenes comprimidas"
 
 # Crear el archivo de log
 if [[ ! -f "$LOG_FILE" ]]; then
-    echo "=== Registro de Yocompress ===" > "$LOG_FILE"
+    echo "=== Registro de Yo-compress ===" > "$LOG_FILE"
 fi
 # Agregar registro de inicio
-echo "=== Inicio del script Yocompress: $(date) ===" >> "$LOG_FILE"
+echo "=== 🚀 Inicio del script Yo-compress: $(date) ===" >> "$LOG_FILE"
 
 # Solicitar valores de calidad de forma interactiva
 read -p "Enter JPEG quality (0-100, default 85): " jpeg_quality
@@ -123,5 +123,5 @@ if [ ! -f "$webp_path" ]; then
 fi;' {} \;) >> $LOG_FILE
 show_spinner_message $! "Procesando imágenes PNG"
 
-echo "=== Fin del script Yocompress: $(date) ===" >> "$LOG_FILE"
+echo "=== 🏁 Fin del script Yo-compress: $(date) ===" >> "$LOG_FILE"
 echo "Imágenes comprimidas guardadas en: $output_dir"
