@@ -16,25 +16,45 @@ fi
 
 echo "Sistema operativo detectado: $OS"
 
-# Instalar dependencias según el sistema operativo
+# Función para animación
+show_spinner() {
+    local pid=$1
+    local delay=0.1
+    local spinstr='|/-\'
+    tput civis  # Ocultar cursor
+    while ps -p $pid &>/dev/null; do
+        local temp=${spinstr#?}
+        printf " [%c] Instalando...  " "$spinstr"
+        spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        printf "\r"
+    done
+    tput cnorm  # Restaurar cursor
+    echo " [✔] Hecho"
+}
+
+# Función para instalar dependencias
 install_dependencies() {
     case "$OS" in
         ubuntu|debian)
             echo "Instalando dependencias para $OS..."
-            sudo apt update
-            sudo apt install -y webp imagemagick
+            (sudo apt update -qq && sudo apt install -y webp imagemagick -qq) &>/dev/null &
+            show_spinner $!
             ;;
         fedora|centos|rhel)
             echo "Instalando dependencias para $OS..."
-            sudo dnf install -y libwebp-tools ImageMagick
+            (sudo dnf install -y libwebp-tools ImageMagick -q) &>/dev/null &
+            show_spinner $!
             ;;
         arch)
             echo "Instalando dependencias para Arch Linux..."
-            sudo pacman -S --noconfirm libwebp imagemagick
+            (sudo pacman -S --noconfirm libwebp imagemagick) &>/dev/null &
+            show_spinner $!
             ;;
         opensuse)
             echo "Instalando dependencias para openSUSE..."
-            sudo zypper install -y libwebp-tools ImageMagick
+            (sudo zypper install -y libwebp-tools ImageMagick) &>/dev/null &
+            show_spinner $!
             ;;
         darwin)
             echo "Instalando dependencias para macOS..."
@@ -42,7 +62,8 @@ install_dependencies() {
                 echo "Homebrew no está instalado. Instálalo primero desde https://brew.sh"
                 exit 1
             fi
-            brew install webp imagemagick
+            (brew install webp imagemagick) &>/dev/null &
+            show_spinner $!
             ;;
         *)
             echo "Sistema operativo no soportado. Por favor instala 'webp' e 'imagemagick' manualmente."
@@ -73,7 +94,8 @@ cp "$SCRIPT_NAME" "$TEMP_DIR"
 chmod +x "$TEMP_DIR/$SCRIPT_NAME"
 
 # Mover el script a /usr/local/bin con el nombre "yocompress"
-sudo mv "$TEMP_DIR/$SCRIPT_NAME" /usr/local/bin/yocompress
+(sudo mv "$TEMP_DIR/$SCRIPT_NAME" /usr/local/bin/yocompress) &>/dev/null &
+show_spinner $!
 
 # Limpiar el directorio temporal
 rm -rf "$TEMP_DIR"
