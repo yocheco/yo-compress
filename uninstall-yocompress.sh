@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Forzar modo interactivo
-exec < /dev/tty
+
 
 echo "=== Desinstalador de Yocompress ==="
 
 # Pregunta de confirmación
 read -p "¿Estás seguro de que deseas desinstalar Yocompress? (s/n): " confirm
+confirm=${confirm:-"n"}
 if [[ "$confirm" != "s" && "$confirm" != "S" ]]; then
     echo "Desinstalación cancelada."
     exit 0
@@ -23,6 +23,7 @@ fi
 
 # Pregunta sobre dependencias
 read -p "¿Deseas eliminar las dependencias instaladas (webp, ImageMagick)? (s/n): " remove_deps
+confirm=${confirm:-"n"}
 if [[ "$remove_deps" == "s" || "$remove_deps" == "S" ]]; then
     echo "Detectando sistema operativo..."
     if [[ -f /etc/os-release ]]; then
