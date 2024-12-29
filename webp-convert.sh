@@ -61,11 +61,6 @@ fi
 # Actualizar el script si se invoca con --update
 # =======================================
 # =======================================
-if [[ "$1" == "--update" ]]; then
-    update_script
-    exit 0
-fi
-
 # Función para actualizar el script
 update_script() {
     echo "Comprobando actualizaciones..."
@@ -92,6 +87,10 @@ update_script() {
     fi
 }
 
+if [[ "$1" == "--update" ]]; then
+    update_script
+    exit 0
+fi
 
 # Función para mostrar una animación de spinner
 show_spinner() {
